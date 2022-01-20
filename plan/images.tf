@@ -27,10 +27,6 @@ resource "docker_image" "nginx" {
   }
 }
 
-resource "docker_image" "mariadb" {
-  name = "mariadb:10.5"
-}
-
 resource "docker_image" "node" {
   depends_on = [docker_image.os]
   name = "node"

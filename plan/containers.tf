@@ -46,8 +46,8 @@ resource "docker_container" "nginx" {
 }
 
 resource "docker_container" "mariadb" {
-  depends_on = [docker_image.mariadb, docker_container.php-app, docker_volume.mariadb]
-  image = docker_image.mariadb.latest
+  depends_on = [docker_container.php-app, docker_volume.mariadb]
+  image = "mariadb:10.5"
   name  = "mariadb"
   restart = "always"
   env = [

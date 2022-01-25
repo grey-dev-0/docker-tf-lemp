@@ -30,15 +30,6 @@ resource "docker_container" "nginx" {
     from_container = docker_container.php-app.name
   }
 
-  ports {
-    internal = 80
-    external = 80
-  }
-  ports {
-    internal = 443
-    external = 443
-  }
-
   networks_advanced {
     name = docker_network.development.name
     ipv4_address = "100.100.50.3"

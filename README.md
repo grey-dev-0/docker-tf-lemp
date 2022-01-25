@@ -40,15 +40,6 @@ The `volumes` block is repeatable, so if you want to mount multiple locations fr
 
 ## Customizing Network Settings
 
-The default port map specified in this plan is as follows:
-
-- `80` host >> `80` container
-- `443` host >> `443` container
-
-The port `80` is already configured in the `nginx` services, where port `443` can be added to its configuration in `build/resources/nginx/*.conf` files.
-
-The host ports can be customized in the `nginx` container configuration found in `plan/containers.tf` file, make sure to change only the `external` parameter of each `ports` block, unless you know what you're doing of course.
-
 The stack containers are bound to a network configured in the `plan/networks.tf` file, feel free to modify its IP address and, any other parameter as you see fit but, make sure that all containers in `plan/containers.tf` file follow the same IP range in case you've changed it, the IP address of each container is in the `networks_advanced` block under each container in the `containers.tf` file.
 
 ## Credits &amp; Attribution

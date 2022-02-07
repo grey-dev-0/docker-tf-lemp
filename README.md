@@ -8,7 +8,7 @@ This repository includes a terraform plan which can be used to build a dockerize
 - `nginx` latest `stable` release
 - `MariaDB 10.5.x`
 - `NodeJS 14.x` (image only - includes all node modules required for building VueJS SFC libraries)
-- `CentOS 8` (base image for `php`, `nginx` and, `node` services)
+- `Rocky Linux 8` (base image for `php`, `nginx` and, `node` services)
 
 ### Node image usage
 

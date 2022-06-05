@@ -4,9 +4,11 @@ This repository includes a terraform plan which can be used to build a dockerize
 
 ## Services included in this stack
 
-- `php 8.0.x` including all extensions required by the `Laravel 8.x` framework
+- `php 7.4` including all extensions required by the `Laravel 7.x, 8.x` framework
+- `php 8.0`including all extensions required by the `Laravel 8.x` framework
 - `nginx` latest `stable` release
 - `MariaDB 10.5.x`
+- `Redis 6.x`
 - `NodeJS 14.x` (image only - includes all node modules required for building VueJS SFC libraries)
 - `Rocky Linux 8` (base image for `php`, `nginx` and, `node` services)
 

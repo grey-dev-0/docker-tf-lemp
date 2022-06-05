@@ -13,6 +13,16 @@ resource "docker_image" "php" {
   build {
     path = "build"
     dockerfile = "php.Dockerfile"
+    tag = ["php:74"]
+  }
+}
+
+resource "docker_image" "php8" {
+  depends_on = [docker_image.os]
+  name = "php8"
+  build {
+    path = "build"
+    dockerfile = "php8.Dockerfile"
     tag = ["php:8"]
   }
 }
@@ -24,6 +34,15 @@ resource "docker_image" "nginx" {
     path = "build"
     dockerfile = "nginx.Dockerfile"
     tag = ["nginx:latest"]
+  }
+}
+
+resource "docker_image" "redis" {
+  name = "redis"
+  build {
+    path = "build"
+    dockerfile = "redis.Dockerfile"
+    tag = ["redis:latest"]
   }
 }
 

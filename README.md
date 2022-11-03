@@ -15,10 +15,12 @@ This repository includes a terraform plan which can be used to build a dockerize
 The main purpose of the node image included in this plan is to run node commands within a php backend projects when necessary, e.g:
 
 ```bash
-$ docker run --rm -it -w /home/server/project node npm install
-$ docker run --rm -it -w /home/server/project node npm run build
-$ docker run --rm -it -w /home/server/project node vue build --target lib --name some_library library.js
+$ docker run --rm --volumes-from nginx -it -w /home/projects/example node npm install
+$ docker run --rm --volumes-from nginx -it -w /home/projects/example node npm run build
+$ docker run --rm --volumes-from nginx -it -w /home/projects/example node vue build --target lib --name some_library library.js
 ```
+
+The `--volumes-from` option is used to inherit the php projects directory mounted to the `nginx` and `php-app` containers thus, any file changes applied by the `npm` command will instantly be reflected into those containers as well.
 
 The image can be used to start a node server, it's recommended to add a container plan for it in the `plan/containers.tf` file.
 

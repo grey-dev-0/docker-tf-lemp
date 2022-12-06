@@ -7,8 +7,8 @@ This repository includes a terraform plan which can be used to build a dockerize
 - `php 8.0.x` including all extensions required by the `Laravel 8.x` framework
 - `nginx` latest `stable` release
 - `MariaDB 10.5.x`
-- `NodeJS 14.x` (image only - includes all node modules required for building VueJS SFC libraries)
-- `Rocky Linux 8` (base image for `php`, `nginx` and, `node` services)
+- `NodeJS 16.x` (image only)
+- `Rocky Linux 9` (base image for `php`, `nginx` and, `node` services)
 
 ### Node image usage
 
@@ -47,5 +47,5 @@ The stack containers are bound to a network configured in the `plan/networks.tf`
 ## Credits &amp; Attribution
 
 - [Kreuzwerker Docker Terraform Provider](https://registry.terraform.io/providers/kreuzwerker/docker/latest)
-- [CentOS Docker Repository](https://hub.docker.com/u/centos)
+- [RockyLinux Docker Repository](https://hub.docker.com/u/rockylinux)
 - [Remi's RPM Repository](https://rpms.remirepo.net)

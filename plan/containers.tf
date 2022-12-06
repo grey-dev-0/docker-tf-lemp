@@ -1,6 +1,6 @@
 resource "docker_container" "php-app" {
   depends_on = [docker_image.php, docker_network.development]
-  image = docker_image.php.latest
+  image = docker_image.php.image_id
   name  = "php-app"
   restart = "always"
 
@@ -22,7 +22,7 @@ resource "docker_container" "php-app" {
 
 resource "docker_container" "nginx" {
   depends_on = [docker_image.nginx, docker_container.php-app]
-  image = docker_image.nginx.latest
+  image = docker_image.nginx.image_id
   name  = "nginx"
   restart = "always"
 

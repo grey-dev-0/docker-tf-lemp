@@ -17,6 +17,16 @@ resource "docker_image" "php" {
   }
 }
 
+resource "docker_image" "php81" {
+  depends_on = [docker_image.os]
+  name = "php81"
+  build {
+    context = "build"
+    dockerfile = "php81.Dockerfile"
+    tag = ["php:81"]
+  }
+}
+
 resource "docker_image" "nginx" {
   depends_on = [docker_image.os]
   name = "nginx"

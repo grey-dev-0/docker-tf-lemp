@@ -4,7 +4,8 @@ This repository includes a terraform plan which can be used to build a dockerize
 
 ## Services included in this stack
 
-- `php 8.0.x` including all extensions required by the `Laravel 8.x` framework
+- `php 8.0.x` including all extensions required by `Laravel 8.x` and up.
+- `php 8.1.x` including all extensions required by `Laravel 8.x` and up.
 - `nginx` latest `stable` release
 - `MariaDB 10.5.x`
 - `NodeJS 16.x` (image only)

@@ -21,13 +21,18 @@ resource "docker_container" "php-app" {
 }
 
 resource "docker_container" "nginx" {
-  depends_on = [docker_image.nginx, docker_container.php-app]
+  depends_on = [docker_image.nginx, docker_container.php-app, docker_volume.nginx]
   image = docker_image.nginx.image_id
   name  = "nginx"
   restart = "always"
 
   volumes {
     from_container = docker_container.php-app.name
+  }
+
+  volumes {
+    volume_name = docker_volume.nginx.name
+    container_path = "/etc/nginx/vhosts"
   }
 
   networks_advanced {

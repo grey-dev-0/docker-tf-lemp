@@ -1,6 +1,6 @@
-# Terraform Docker LEMP stack
+# Docker LEMP stack
 
-This repository includes a terraform plan which can be used to build a dockerized LEMP stack, the `main` branch holds a single node stack plan, another branch that provides a scalable plan will be implemented later on.
+This repository includes a docker compose plan which builds a dockerized LEMP stack, for terraform plan check the `main` branch.
 
 ## Services included in this stack
 
@@ -26,26 +26,21 @@ The image can be used to start a node server, it's recommended to add a containe
 
 # Customization &amp; Usage
 
-To build and start the stack all you need is to have Docker and Terraform installed then, in terminal you write:
+To build and start the stack all you need is to have Docker installed then, in terminal you write:
 
 ```bash
-$ terraform init
-$ terraform plan        # Optional
-$ terraform apply 
+$ docker compose up -d
 ```
 
 ## Customizing Project(s) Location
 
-To specify where your project(s) is located in your system and, where you'd like to mount it within the `php-app` container, please add or edit the existing `volumes` block found in the first container in `plan/containers.tf` file.
-
-The `volumes` block is repeatable, so if you want to mount multiple locations from your system into the container feel free to add as much `volumes` blocks as you need.
+To specify where your project(s) is located in your system please put your projects' absolute directory path in place of `/opt/public_html` found in the `volumes` section of both `nginx` and `php` services in the `docker-compose.yml` file.
 
 ## Customizing Network Settings
 
-The stack containers are bound to a network configured in the `plan/networks.tf` file, feel free to modify its IP address and, any other parameter as you see fit but, make sure that all containers in `plan/containers.tf` file follow the same IP range in case you've changed it, the IP address of each container is in the `networks_advanced` block under each container in the `containers.tf` file.
+The stack containers are bound to a network configured in the `docker-compose.yml` file, feel free to modify its IP address and, any other parameter as you see fit but, make sure that all services in the file follow the same IP range in case you've changed it.
 
 ## Credits &amp; Attribution
 
-- [Kreuzwerker Docker Terraform Provider](https://registry.terraform.io/providers/kreuzwerker/docker/latest)
 - [RockyLinux Docker Repository](https://hub.docker.com/u/rockylinux)
 - [Remi's RPM Repository](https://rpms.remirepo.net)

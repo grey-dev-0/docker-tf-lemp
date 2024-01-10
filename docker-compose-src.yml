@@ -1,0 +1,55 @@
+version: '3'
+services:
+  kernel:
+    build:
+      context: .
+      dockerfile: os.Dockerfile
+    image: kernel
+    deploy:
+      replicas: 0
+  mariadb:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: '123456'
+    networks:
+      development:
+        ipv4_address: 100.100.10.3
+    volumes:
+      - 'database:/var/lib/mysql'
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    image: nginx
+    restart: always
+    networks:
+      development:
+        ipv4_address: 100.100.10.2
+    volumes:
+      - 'nginx:/etc/nginx/vhosts'
+      - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
+      - '/opt/public_html:/home/projects'
+  php:
+    build:
+      context: .
+      dockerfile: php.Dockerfile
+    image: php
+    restart: always
+    networks:
+      development:
+        ipv4_address: 100.100.10.4
+    volumes:
+      - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
+      - '/opt/public_html:/home/projects'
+
+networks:
+  development:
+    ipam:
+      config:
+        - subnet: '100.100.10.0/24'
+
+volumes:
+  nginx:
+  database:
+  php-fpm:

@@ -1,3 +1,0 @@
-module "stack" {
-  source = "./plan"
-}

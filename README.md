@@ -4,25 +4,11 @@ This repository includes a docker compose plan which builds a dockerized LEMP st
 
 ## Services included in this stack
 
-- `php 8.0.x` including all extensions required by the `Laravel 8.x` framework
+- `php 8.1.x` including all extensions required by the `Laravel 8.x` framework
 - `nginx` latest `stable` release
-- `MariaDB 10.5.x`
-- `NodeJS 16.x` (image only)
+- `MariaDB 10.6.x`
+- `NodeJS 16.x` (included in `php`)
 - `Rocky Linux 9` (base image for `php`, `nginx` and, `node` services)
-
-### Node image usage
-
-The main purpose of the node image included in this plan is to run node commands within a php backend projects when necessary, e.g:
-
-```bash
-$ docker run --rm --volumes-from nginx -it -w /home/projects/example node npm install
-$ docker run --rm --volumes-from nginx -it -w /home/projects/example node npm run build
-$ docker run --rm --volumes-from nginx -it -w /home/projects/example node vue build --target lib --name some_library library.js
-```
-
-The `--volumes-from` option is used to inherit the php projects directory mounted to the `nginx` and `php-app` containers thus, any file changes applied by the `npm` command will instantly be reflected into those containers as well.
-
-The image can be used to start a node server, it's recommended to add a container plan for it in the `plan/containers.tf` file.
 
 # Customization &amp; Usage
 

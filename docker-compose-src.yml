@@ -29,7 +29,7 @@ services:
     volumes:
       - 'nginx:/etc/nginx/vhosts'
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
-      - '/opt/public_html:/home/projects'
+      - 'wsl-src:/home/projects'
   php:
     build:
       context: .
@@ -41,7 +41,16 @@ services:
         ipv4_address: 100.100.10.4
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
-      - '/opt/public_html:/home/projects'
+      - 'wsl-src:/home/projects'
+  mutagen:
+    build:
+      context: .
+      dockerfile: mutagen.Dockerfile
+    image: mutagen
+    restart: always
+    volumes:
+      - '/c/xampp/htdocs:/home/alpha'
+      - 'wsl-src:/home/beta'
 
 networks:
   development:
@@ -53,3 +62,4 @@ volumes:
   nginx:
   database:
   php-fpm:
+  wsl-src:

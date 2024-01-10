@@ -1,0 +1,14 @@
+#! /bin/bash
+
+cd ~
+if [ -f synclist ]; then
+  for d in $(cat synclist); do
+    if [ ! -d /home/beta/$d ]; then
+      mkdir -p /home/beta/$d
+    fi
+    mutagen sync create /home/alpha/$d /home/beta/$d --ignore-vcs --default-file-mode-beta=644 --default-directory-mode-beta=755 --default-group-beta=nginx --default-owner-beta=nginx
+  done
+  mutagen sync monitor
+else
+  mutagen daemon run
+fi

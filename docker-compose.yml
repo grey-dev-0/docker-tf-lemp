@@ -1,5 +1,4 @@
 version: '3'
-# noinspection ComposeUnknownKeys
 name: lemp
 services:
   mariadb:
@@ -25,7 +24,7 @@ services:
       - 'nginx:/etc/nginx/vhosts'
       - "${MKCERT_ROOT}:/etc/nginx/ssl"
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
-      - "${PROJECTS_ROOT}:/home/projects"
+      - 'wsl-src:/home/projects'
   php:
     image: php-app
     hostname: app
@@ -37,7 +36,7 @@ services:
         ipv4_address: 100.100.10.4
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
-      - "${PROJECTS_ROOT}:/home/projects"
+      - 'wsl-src:/home/projects'
   phpmyadmin:
     image: phpmyadmin
     hostname: db-admin
@@ -62,7 +61,13 @@ services:
       - "${MKCERT_ROOT}:/root/.local/share/mkcert"
       - '/etc/hosts:/etc/host.hosts'
       - '/var/run/docker.sock:/var/run/docker.sock'
-      - "${PROJECTS_ROOT}/lemp:/home/projects/lemp"
+      - "wsl-src:/home/projects"
+  mutagen:
+    image: mutagen
+    restart: always
+    volumes:
+      - '/c/xampp/htdocs:/home/alpha'
+      - 'wsl-src:/home/beta'
 
 networks:
   development:
@@ -74,3 +79,4 @@ volumes:
   nginx:
   database:
   php-fpm:
+  wsl-src:

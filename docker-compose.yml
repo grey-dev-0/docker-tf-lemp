@@ -8,6 +8,8 @@ services:
     networks:
       development:
         ipv4_address: 100.100.10.3
+    ports:
+      - '3306:3306'
     volumes:
       - 'database:/var/lib/mysql'
   nginx:
@@ -16,8 +18,12 @@ services:
     networks:
       development:
         ipv4_address: 100.100.10.2
+    ports:
+      - '443:443'
+      - '80:80'
     volumes:
       - 'nginx:/etc/nginx/vhosts'
+      - 'ssl:/etc/nginx/ssl'
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - 'wsl-src:/home/projects'
   php:
@@ -29,6 +35,17 @@ services:
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - 'wsl-src:/home/projects'
+  dns:
+    image: dns-app
+    restart: always
+    networks:
+      development:
+        ipv4_address: 100.100.10.5
+    volumes:
+      - 'ssl:/root/.local/share/mkcert'
+      - '/c//Windows/System32/drivers/etc/hosts:/etc/host.hosts'
+    stdin_open: true
+    tty: true
   mutagen:
     image: mutagen
     restart: always
@@ -46,4 +63,5 @@ volumes:
   nginx:
   database:
   php-fpm:
+  ssl:
   wsl-src:

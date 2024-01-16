@@ -29,6 +29,15 @@ services:
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - '/opt/public_html:/home/projects'
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      UPLOAD_LIMIT: 2G
+    networks:
+      development:
+        ipv4_address: 100.100.10.5
 
 networks:
   development:

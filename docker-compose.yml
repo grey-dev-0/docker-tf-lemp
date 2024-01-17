@@ -16,9 +16,10 @@ services:
     networks:
       development:
         ipv4_address: 100.100.10.2
+    env_file: [.env]
     volumes:
       - 'nginx:/etc/nginx/vhosts'
-      - 'ssl:/etc/nginx/ssl'
+      - "${CAROOT}:/etc/nginx/ssl"
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - '/opt/public_html:/home/projects'
   php:
@@ -42,11 +43,12 @@ services:
   dns:
     image: dns-app
     restart: always
+    env_file: [.env]
     networks:
       development:
         ipv4_address: 100.100.10.6
     volumes:
-      - 'ssl:/root/.local/share/mkcert'
+      - "${CAROOT}:/root/.local/share/mkcert"
       - '/etc/hosts:/etc/host.hosts'
     stdin_open: true
     tty: true
@@ -61,4 +63,3 @@ volumes:
   nginx:
   database:
   php-fpm:
-  ssl:

@@ -2,7 +2,7 @@
 
 ./build
 docker compose up -d
-docker cp docker-tf-lemp-dns-1:/usr/bin/mkcert ./mkcert
+docker cp lemp-dns-1:/usr/bin/mkcert ./mkcert
 chmod +x ./mkcert
 CAROOT=$(./mkcert -CAROOT)
 sed -i -e "s#CAROOT=.*#CAROOT=${CAROOT}#" .env

@@ -1,4 +1,6 @@
 version: '3'
+# noinspection ComposeUnknownKeys
+name: lemp
 services:
   mariadb:
     image: mariadb:10.6
@@ -21,7 +23,7 @@ services:
       - 'nginx:/etc/nginx/vhosts'
       - "${CAROOT}:/etc/nginx/ssl"
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
-      - '/opt/public_html:/home/projects'
+      - "${PROJECTS_ROOT}:/home/projects"
   php:
     image: php-app
     restart: always
@@ -30,7 +32,7 @@ services:
         ipv4_address: 100.100.10.4
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
-      - '/opt/public_html:/home/projects'
+      - "${PROJECTS_ROOT}:/home/projects"
   phpmyadmin:
     image: phpmyadmin
     restart: always
@@ -49,9 +51,10 @@ services:
         ipv4_address: 100.100.10.6
     volumes:
       - "${CAROOT}:/root/.local/share/mkcert"
+      - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - '/etc/hosts:/etc/host.hosts'
-    stdin_open: true
-    tty: true
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - "${PROJECTS_ROOT}/lemp:/home/projects/lemp"
 
 networks:
   development:

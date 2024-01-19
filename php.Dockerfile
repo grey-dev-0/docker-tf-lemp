@@ -7,6 +7,6 @@ RUN yum install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm; \
 COPY resources/php/php.ini /etc/opt/remi/php81/
 COPY resources/php/www.conf /etc/opt/remi/php81/php-fpm.d/
 RUN yum install -y gcc-c++ make; \
-    curl -sL https://rpm.nodesource.com/setup_16.x | bash -; \
+    curl -sL https://rpm.nodesource.com/setup_20.x | bash -; \
     yum install -y nodejs
 ENTRYPOINT php-fpm -F

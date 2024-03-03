@@ -8,5 +8,6 @@ CAROOT=$(./mkcert -CAROOT)
 sed -i -e "s#CAROOT=.*#CAROOT=${CAROOT}#" .env
 ./mkcert -install
 rm -f mkcert
+docker exec lemp-dns-1 composer create-project --repository '{"type":"vcs", "url":"https://github.com/grey-dev-0/lemp-server"}' --keep-vcs --stability dev grey-dev-0/lemp-server /home/projects/lemp
 # To pick up new CAROOT env variable change if it occurs.
 docker compose up -d

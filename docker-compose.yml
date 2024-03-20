@@ -4,6 +4,7 @@ name: lemp
 services:
   mariadb:
     image: mariadb:10.6
+    hostname: database
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: '123456'
@@ -14,6 +15,7 @@ services:
       - 'database:/var/lib/mysql'
   nginx:
     image: nginx-app
+    hostname: webserver
     restart: always
     networks:
       development:
@@ -26,6 +28,7 @@ services:
       - "${PROJECTS_ROOT}:/home/projects"
   php:
     image: php-app
+    hostname: app
     restart: always
     networks:
       development:
@@ -35,6 +38,7 @@ services:
       - "${PROJECTS_ROOT}:/home/projects"
   phpmyadmin:
     image: phpmyadmin
+    hostname: db-admin
     restart: always
     environment:
       PMA_HOST: mariadb
@@ -44,6 +48,7 @@ services:
         ipv4_address: 100.100.10.5
   dns:
     image: dns-app
+    hostname: dns-admin;
     restart: always
     env_file: [.env]
     networks:

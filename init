@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -x
 
 ./build
 docker compose up -d

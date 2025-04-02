@@ -3,6 +3,8 @@
 UID=$(id -u)
 GID=$(id -g)
 
+sed -i -e "s#USERID=.*#USERID=${UID}#" .env
+sed -i -e "s#GROUPID=.*#GROUPID=${GID}#" .env
 docker build -f os.Dockerfile --build-arg UID="$UID" --build-arg GID="$GID"  -t kernel .
 docker build -f nginx.Dockerfile -t nginx-app .
 docker build -f php.Dockerfile -t php-app .

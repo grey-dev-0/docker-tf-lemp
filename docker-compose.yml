@@ -30,6 +30,7 @@ services:
     image: php-app
     hostname: app
     restart: always
+    user: "${USERID}:${GROUPID}"
     networks:
       development:
         ipv4_address: 100.100.10.4
@@ -50,6 +51,7 @@ services:
     image: dns-app
     hostname: dns-admin;
     restart: always
+    user: "${USERID}:${GROUPID}"
     env_file: [.env]
     networks:
       development:

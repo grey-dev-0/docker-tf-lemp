@@ -57,7 +57,7 @@ services:
       development:
         ipv4_address: 100.100.10.6
     volumes:
-      - "${CAROOT}:/root/.local/share/mkcert"
+      - "${CAROOT}:/home/user/.local/share/mkcert"
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - '/etc/hosts:/etc/host.hosts'
       - '/var/run/docker.sock:/var/run/docker.sock'

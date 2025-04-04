@@ -1,11 +1,11 @@
-#! /bin/bash -x
+#! /bin/bash -ex
 
-UID=$(id -u)
-GID=$(id -g)
+USERID=$(id -u)
+GROUPID=$(id -g)
 
-sed -i -e "s#USERID=.*#USERID=${UID}#" .env
-sed -i -e "s#GROUPID=.*#GROUPID=${GID}#" .env
-docker build -f os.Dockerfile --build-arg UID="$UID" --build-arg GID="$GID"  -t kernel .
+sed -i -e "s#USERID=.*#USERID=${USERID}#" .env
+sed -i -e "s#GROUPID=.*#GROUPID=${GROUPID}#" .env
+docker build -f os.Dockerfile --build-arg UID="$USERID" --build-arg GID="$GROUPID"  -t kernel .
 docker build -f nginx.Dockerfile -t nginx-app .
 docker build -f php.Dockerfile -t php-app .
 docker build -f dns.Dockerfile -t dns-app .

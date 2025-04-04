@@ -23,14 +23,13 @@ services:
     env_file: [.env]
     volumes:
       - 'nginx:/etc/nginx/vhosts'
-      - "${CAROOT}:/etc/nginx/ssl"
+      - "${MKCERT_ROOT}:/etc/nginx/ssl"
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - "${PROJECTS_ROOT}:/home/projects"
   php:
     image: php-app
     hostname: app
     restart: always
-    user: "${USERID}:${GROUPID}"
     networks:
       development:
         ipv4_address: 100.100.10.4
@@ -52,11 +51,13 @@ services:
     hostname: dns-admin;
     restart: always
     env_file: [.env]
+    tty: true
+    stdin_open: true
     networks:
       development:
         ipv4_address: 100.100.10.6
     volumes:
-      - "${CAROOT}:/root/.local/share/mkcert"
+      - "${MKCERT_ROOT}:/root/.local/share/mkcert"
       - '/etc/hosts:/etc/host.hosts'
       - '/var/run/docker.sock:/var/run/docker.sock'
       - "${PROJECTS_ROOT}/lemp:/home/projects/lemp"

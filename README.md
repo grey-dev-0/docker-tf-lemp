@@ -6,7 +6,7 @@ This repository includes a docker compose plan which builds a dockerized LEMP st
 
 - `php 8.1.x` including all extensions required by `Laravel 8.x` and newer.
 - `nginx` latest `stable` release
-- `MariaDB 10.6.x`
+- `MariaDB 11.4.x`
 - `NodeJS 20.x` (included in `php`)
 - `Rocky Linux 9` (base image for `php` and, `nginx` services)
 

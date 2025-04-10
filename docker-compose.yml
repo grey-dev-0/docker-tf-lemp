@@ -3,7 +3,7 @@ version: '3'
 name: lemp
 services:
   mariadb:
-    image: mariadb:10.6
+    image: mariadb:11.4
     hostname: database
     restart: always
     environment:
@@ -30,6 +30,8 @@ services:
     image: php-app
     hostname: app
     restart: always
+    environment:
+      PROJECTS_ROOT: "${PROJECTS_ROOT}"
     networks:
       development:
         ipv4_address: 100.100.10.4

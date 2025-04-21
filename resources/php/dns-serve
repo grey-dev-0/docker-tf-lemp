@@ -1,0 +1,4 @@
+#! /bin/bash -ex
+
+php artisan queue:work &
+php artisan websocket:init

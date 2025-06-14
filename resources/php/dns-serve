@@ -1,4 +1,4 @@
 #! /bin/bash -ex
 
-php artisan queue:work &
+nohup php artisan queue:work > /dev/null 2>&1 &
 php artisan websocket:init

@@ -3,7 +3,7 @@ version: '3'
 name: lemp
 services:
   mariadb:
-    image: mariadb:11.4
+    image: db-app
     hostname: database
     restart: always
     environment:

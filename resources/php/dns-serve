@@ -1,4 +1,29 @@
 #! /bin/bash -ex
 
-nohup php artisan queue:work > /dev/null 2>&1 &
+MAX_ATTEMPTS=30
+ATTEMPT=0
+WORKER_PID=""
+
+echo "Attempting to start queue worker..."
+
+while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+    nohup php artisan queue:work > /dev/null 2>&1 &
+    WORKER_PID=$!
+    sleep 2
+    
+    if kill -0 $WORKER_PID 2>/dev/null; then
+        echo "Queue worker started successfully (PID: $WORKER_PID)"
+        break
+    fi
+    
+    ATTEMPT=$((ATTEMPT + 1))
+    echo "Worker failed to start (attempt $ATTEMPT/$MAX_ATTEMPTS). Retrying in 2 seconds..."
+    sleep 2
+done
+
+if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+    echo "Failed to start queue worker after $MAX_ATTEMPTS attempts. Exiting."
+    exit 1
+fi
+
 php artisan websocket:init

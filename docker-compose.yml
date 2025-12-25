@@ -25,6 +25,7 @@ services:
       - 'nginx:/etc/nginx/vhosts'
       - "${MKCERT_ROOT}:/etc/nginx/ssl"
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
+      - 'php82-fpm:/var/opt/remi/php82/run/php-fpm'
       - "${PROJECTS_ROOT}:/home/projects"
   php:
     image: php-app
@@ -37,6 +38,18 @@ services:
         ipv4_address: 100.100.10.4
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
+      - "${PROJECTS_ROOT}:/home/projects"
+  php82:
+    image: php82-app
+    hostname: app82
+    restart: always
+    environment:
+      PROJECTS_ROOT: "${PROJECTS_ROOT}"
+    networks:
+      development:
+        ipv4_address: 100.100.10.7
+    volumes:
+      - 'php82-fpm:/var/opt/remi/php82/run/php-fpm'
       - "${PROJECTS_ROOT}:/home/projects"
   phpmyadmin:
     image: phpmyadmin
@@ -74,3 +87,4 @@ volumes:
   nginx:
   database:
   php-fpm:
+  php82-fpm:

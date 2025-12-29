@@ -21,19 +21,13 @@ services:
     networks:
       development:
         ipv4_address: 100.100.10.2
-<<<<<<< HEAD
-    env_file: [.env]
-    volumes:
-      - 'nginx:/etc/nginx/vhosts'
-      - "${MKCERT_ROOT}:/etc/nginx/ssl"
-=======
     ports:
       - '443:443'
       - '80:80'
+    env_file: [.env]
     volumes:
       - 'nginx:/etc/nginx/vhosts'
       - 'ssl:/etc/nginx/ssl'
->>>>>>> ec2ac1e (Added mkcert and mounted outer system hosts in for custom domains support.)
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - 'wsl-src:/home/projects'
   php:
@@ -48,7 +42,6 @@ services:
     volumes:
       - 'php-fpm:/var/opt/remi/php81/run/php-fpm'
       - 'wsl-src:/home/projects'
-<<<<<<< HEAD
   phpmyadmin:
     image: phpmyadmin
     hostname: db-admin
@@ -61,7 +54,7 @@ services:
         ipv4_address: 100.100.10.5
   dns:
     image: dns-app
-    hostname: dns-admin;
+    hostname: dns-admin
     restart: always
     env_file: [.env]
     tty: true
@@ -70,23 +63,10 @@ services:
       development:
         ipv4_address: 100.100.10.6
     volumes:
-      - "${MKCERT_ROOT}:/root/.local/share/mkcert"
-      - '/etc/hosts:/etc/host.hosts'
+      - 'ssl:/root/.local/share/mkcert'
+      - '/c/Windows/System32/drivers/etc/hosts:/etc/host.hosts'
       - '/var/run/docker.sock:/var/run/docker.sock'
       - "wsl-src:/home/projects"
-=======
-  dns:
-    image: dns-app
-    restart: always
-    networks:
-      development:
-        ipv4_address: 100.100.10.5
-    volumes:
-      - 'ssl:/root/.local/share/mkcert'
-      - '/c//Windows/System32/drivers/etc/hosts:/etc/host.hosts'
-    stdin_open: true
-    tty: true
->>>>>>> ec2ac1e (Added mkcert and mounted outer system hosts in for custom domains support.)
   mutagen:
     image: mutagen
     restart: always

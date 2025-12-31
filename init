@@ -1,5 +1,9 @@
 #! /bin/bash -ex
 
+set -a
+source .env
+set +a
+
 ./build
 
 # Expand ~ to home directory for macOS compatibility

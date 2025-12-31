@@ -1,17 +1,33 @@
 #! /bin/bash -ex
 
 ./build
+
+# Expand ~ to home directory for macOS compatibility
+PROJECTS_ROOT=$(eval echo $PROJECTS_ROOT)
+MKCERT_ROOT=$(eval echo $MKCERT_ROOT)
+
+# Ensure project directory exists
+mkdir -p "$PROJECTS_ROOT"
+mkdir -p "$MKCERT_ROOT"
+
 docker compose up -d
+
+# Extract mkcert from container and install
 docker cp lemp-dns-1:/usr/bin/mkcert ./mkcert
 chmod +x ./mkcert
 CAROOT=$(./mkcert -CAROOT)
-sed -i -e "s#MKCERT_ROOT=.*#MKCERT_ROOT=${CAROOT}#" .env
+sed -i '' -e "s#MKCERT_ROOT=.*#MKCERT_ROOT=${CAROOT}#" .env
 ./mkcert -install
 rm -f mkcert
+
+# Setup lemp project
 docker exec lemp-dns-1 rm -rf /home/projects/lemp/* /home/projects/lemp/.[^.]*
 docker exec -w /home/projects lemp-dns-1 composer create-project --repository '{"type":"vcs", "url":"https://github.com/grey-dev-0/lemp-server"}' --keep-vcs --stability dev grey-dev-0/lemp-server lemp
-# To pick up new CAROOT env variable change if it occurs.
+
+# Restart to pick up new CAROOT env variable
 docker compose restart
+
+# Initialize lemp project
 docker exec -w /home/projects/lemp lemp-dns-1 php artisan lemp:setup
 docker exec -itw /home/projects/lemp lemp-dns-1 npm i
 docker exec -itw /home/projects/lemp lemp-dns-1 npm run build

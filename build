@@ -1,10 +1,11 @@
 #! /bin/bash -ex
 
-USERID=$(id -u)
-GROUPID=$(id -g)
+# On macOS with OrbStack, use default values
+USERID=1000
+GROUPID=1000
 
-sed -i -e "s#USERID=.*#USERID=${USERID}#" .env
-sed -i -e "s#GROUPID=.*#GROUPID=${GROUPID}#" .env
+sed -i '' -e "s#USERID=.*#USERID=${USERID}#" .env
+sed -i '' -e "s#GROUPID=.*#GROUPID=${GROUPID}#" .env
 docker build -f os.Dockerfile --build-arg UID="$USERID" --build-arg GID="$GROUPID"  -t kernel .
 docker build -f nginx.Dockerfile -t nginx-app .
 docker build -f php.Dockerfile -t php-app .

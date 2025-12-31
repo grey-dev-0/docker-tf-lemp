@@ -73,7 +73,6 @@ services:
         ipv4_address: 100.100.10.6
     volumes:
       - "${MKCERT_ROOT}:/root/.local/share/mkcert"
-      - '/etc/hosts:/etc/host.hosts'
       - '/var/run/docker.sock:/var/run/docker.sock'
       - "${PROJECTS_ROOT}/lemp:/home/projects/lemp"
 

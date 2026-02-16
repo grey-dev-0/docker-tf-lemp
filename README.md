@@ -4,7 +4,7 @@ This repository includes a docker compose plan which builds a dockerized LEMP st
 
 ## Services included in this stack
 
-- `php 8.1.x` including all extensions required by `Laravel 8.x` and newer.
+- `php 8.1.x`, `php 8.2.x`, and `php 8.4.x` including all extensions required by `Laravel 8.x` and newer.
 - `nginx` latest `stable` release
 - `MariaDB 11.4.x`
 - `NodeJS 20.x` (included in `php`)

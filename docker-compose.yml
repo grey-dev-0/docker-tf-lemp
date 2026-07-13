@@ -64,6 +64,18 @@ services:
     volumes:
       - 'php84-fpm:/var/opt/remi/php84/run/php-fpm'
       - "${PROJECTS_ROOT}:/home/projects"
+  postgres:
+    image: postgres:17
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: '123456'
+    networks:
+      development:
+        ipv4_address: 100.100.10.9
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
   phpmyadmin:
     image: phpmyadmin
     hostname: db-admin
@@ -99,6 +111,7 @@ networks:
 volumes:
   nginx:
   database:
+  postgres:
   php-fpm:
   php82-fpm:
   php84-fpm:

@@ -1,0 +1,13 @@
+#!/bin/sh
+# Prints the web client / pairing URLs recorded by the entrypoint; --qr also renders the
+# pairing URL as a terminal QR code for the Orca mobile app (use `docker exec -it`).
+f=${ORCA_INFO_DIR:-/var/lib/orca-info}/urls.txt
+if [ ! -r "$f" ]; then
+    echo "No URLs recorded at $f yet; is orca serve still starting? (check: docker logs)" >&2
+    exit 1
+fi
+cat "$f"
+if [ "$1" = --qr ]; then
+    url=$(sed -n 's/^PAIRING_URL=//p' "$f")
+    [ -n "$url" ] && qrencode -t ansiutf8 -m 2 "$url"
+fi

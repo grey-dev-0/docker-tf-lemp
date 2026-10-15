@@ -101,7 +101,26 @@ services:
       - '/etc/hosts:/etc/host.hosts'
       - '/var/run/docker.sock:/var/run/docker.sock'
       - "${PROJECTS_ROOT}/lemp:/home/projects/lemp"
-
+  orca:
+    image: orca-app
+    container_name: lemp-orca
+    hostname: ai
+    restart: always
+    init: true
+    shm_size: 256m
+    environment:
+      ORCA_PAIRING_ADDRESS: wss://ai.example.net
+      ORCA_MOBILE_PAIRING: ${ORCA_MOBILE_PAIRING:-0}
+    networks:
+      development:
+        ipv4_address: 100.100.10.8
+    volumes:
+    - orca-home:/home/nginx
+    - ./orca-info:/var/lib/orca-info
+    - ${PROJECTS_ROOT}:/home/projects
+    - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+    - '127.0.0.1:6768:6768'
 networks:
   development:
     ipam:
@@ -109,9 +128,10 @@ networks:
         - subnet: '100.100.10.0/24'
 
 volumes:
-  nginx:
-  database:
-  postgres:
-  php-fpm:
-  php82-fpm:
-  php84-fpm:
+  nginx: null
+  database: null
+  postgres: null
+  php-fpm: null
+  php82-fpm: null
+  php84-fpm: null
+  orca-home: null

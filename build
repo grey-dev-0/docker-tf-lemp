@@ -12,3 +12,4 @@ docker build -f php82.Dockerfile -t php82-app .
 docker build -f php84.Dockerfile -t php84-app .
 docker build -f dns.Dockerfile -t dns-app .
 docker build -f db.Dockerfile -t db-app .
+docker build -f orca.Dockerfile --build-arg UID="$USERID" --build-arg GID="$GROUPID" -t orca-app .

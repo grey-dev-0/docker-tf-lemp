@@ -1,0 +1,48 @@
+#!/bin/bash
+# List Orca server access, or revoke all of it when the URLs are compromised; Orca ships no CLI for this.
+#   ./orca-devices               list paired clients and pairing links (ID = first 8 chars of the device id)
+#   ./orca-devices revoke [-y]   revoke every client and link, then restart the orca service so it issues a
+#                                fresh pairing/web URL pair (read it with `docker exec lemp-orca orca-urls`).
+#                                Every client must re-pair; agents running in Orca terminals stop.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+container=lemp-orca
+registry=/home/nginx/.config/orca/orca-devices.json
+# Why: --volumes-from reaches the home volume whether the container is running or stopped.
+in_volume() { docker run --rm -i --volumes-from "$container" --entrypoint "$@"; }
+
+list() {
+    {
+        printf 'ID\tFROM LINK\tNAME\tSCOPE\tPAIRED (UTC)\tLAST SEEN (UTC)\n'
+        in_volume jq orca-app -r '.[] | [.deviceId[0:8], ((.forkedFrom // "-")[0:8]), .name, .scope,
+            (.pairedAt / 1000 | floor | strftime("%F %R")),
+            (if (.lastSeenAt // 0) > 0 then (.lastSeenAt / 1000 | floor | strftime("%F %R")) else "never" end)] | @tsv' "$registry"
+    } | column -t -s $'\t'
+    echo
+    echo "A \"never\" entry is the current unused pairing link."
+}
+
+revoke() {
+    if [ "${1:-}" != -y ]; then
+        read -rp "Revoke ALL Orca clients and links, then restart orca? Every client must re-pair. [y/N] " answer
+        [[ $answer =~ ^[Yy]$ ]] || { echo "Aborted."; exit 1; }
+    fi
+    # Why: the running server keeps the registry in memory and rewrites it, so empty it while stopped.
+    docker compose stop orca
+    # The old urls.txt goes too, so the wait below can't print the compromised URLs.
+    in_volume sh orca-app -c 'f=$1; [ -f "$f" ] && printf "[]\n" > "$f"; rm -f "$ORCA_INFO_DIR/urls.txt"' sh "$registry"
+    docker compose start orca
+    echo "Revoked all access. Waiting for the new URLs..."
+    for _ in $(seq 60); do
+        docker exec "$container" orca-urls >/dev/null 2>&1 && break
+        sleep 2
+    done
+    docker exec "$container" orca-urls
+}
+
+case ${1:-list} in
+    list) list ;;
+    revoke) shift; revoke "$@" ;;
+    *) echo "usage: $0 [list] | revoke [-y]" >&2; exit 2 ;;
+esac

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // Global config: applies to every project for this user.
+  "agents": {
+    "auto": {
+      "description": "Unattended / remote operation with full privileges and no approval prompts",
+      "mode": "primary",
+      "permissions": [
+        // Allow every tool on every resource.
+        { "action": "*", "resource": "*", "effect": "allow" },
+        // Override the base policy's "ask" rules so nothing blocks waiting
+        // for an approval nobody is there to give:
+        { "action": "external_directory", "resource": "*", "effect": "allow" },
+        { "action": "read", "resource": "*.env", "effect": "allow" },
+        { "action": "read", "resource": "*.env.*", "effect": "allow" },
+        // Never stall on an interactive question when running unattended.
+        { "action": "question", "resource": "*", "effect": "deny" }
+        // Note: the experimental `browser` tool is hard-denied by the system
+        // in v2.0.29 (its deny rule is appended after all config rules), so
+        // it cannot be enabled via permissions in this version.
+      ]
+    }
+  },
+  // OpenCode Quota: tuiCommandDisplay chooses whether native TUI command output appears in the session transcript or a local popup dialog.
+  // OpenCode Quota: loads the server plugin for slash commands and quota checks.
+  "plugins": [
+    "@slkiser/opencode-quota@latest"
+  ]
+}

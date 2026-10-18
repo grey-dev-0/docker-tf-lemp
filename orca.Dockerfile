@@ -36,6 +36,14 @@ RUN set -eux; arch=$(uname -m); ver=$ORCA_VERSION; \
 # Self-updaters are off since the runtime user can't write here; rebuild the image to update.
 RUN npm install -g @anthropic-ai/claude-code @opencode/cli && npm cache clean --force
 
+# Home defaults, seeded into /etc/skel before the user exists so useradd copies them into the image's home, and the
+# entrypoint into a fresh volume: Orca's skills (pinned to this Orca build's commit; for Claude Code and, through
+# ~/.agents/skills, OpenCode), plus OpenCode's unattended `auto` agent and the opencode-quota plugin.
+COPY resources/orca/skel/ /etc/skel/
+RUN HOME=/etc/skel npm_config_cache=/tmp/npm-cache \
+        orca-ide skills install --skill computer-use --skill orca-cli --skill orchestration && \
+    rm -rf /tmp/npm-cache /etc/skel/.cache
+
 RUN groupadd --gid $GID $USERNAME; useradd --uid $UID --gid $GID --create-home --shell /bin/bash $USERNAME; \
     git config --system --add safe.directory '*'
 COPY resources/orca/entrypoint.sh /usr/local/bin/orca-entrypoint

@@ -68,6 +68,8 @@ Each link mints one device grant, so pair each device (desktop, browser, phone) 
 
 Agent logins are done after deployment from Orca's terminals or from a shell in the container: `claude` → `/login`, `opencode auth login`, or `orca account add --agent claude`.
 
+A fresh `orca-home` volume starts with the home defaults from `/etc/skel`. These are Orca's `computer-use`, `orca-cli` and `orchestration` skills, pinned to the image's Orca build, for Claude Code and OpenCode. OpenCode also gets the unattended `auto` agent and the `opencode-quota` plugin (`resources/orca/skel`). An existing volume keeps its own files; install the skills there with `docker exec -u nginx lemp-orca orca skills install --skill <name>`.
+
 To update Orca, Claude Code and OpenCode, rebuild the image (`--no-cache`) and recreate the container. Their self-updaters are disabled.
 
 ## Credits &amp; Attribution

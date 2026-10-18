@@ -12,7 +12,8 @@ if [ "$(id -u)" = 0 ]; then
     home=$(getent passwd "$ORCA_USER" | cut -d: -f6)
     mkdir -p "$home" "$ORCA_INFO_DIR"
     # Fresh volumes arrive empty and/or root-owned.
-    [ -f "$home/.bashrc" ] || cp -a /etc/skel/. "$home/"
+    # Why: /etc/skel is root-owned, so its copy needs chowning even when the home dir itself is already $uid's.
+    [ -f "$home/.bashrc" ] || { cp -a /etc/skel/. "$home/"; chown -R "$uid:$gid" "$home"; }
     [ "$(stat -c %u "$home")" = "$uid" ] || chown -R "$uid:$gid" "$home"
     chown "$uid:$gid" "$ORCA_INFO_DIR"; chmod 700 "$ORCA_INFO_DIR"
     # Host docker socket (when mounted): its group id differs per host, so add $ORCA_USER to a group

@@ -54,9 +54,10 @@ record() {
         # Why: the URLs embed a device token; keep the file owner-only.
         (umask 077; cat > "$info_file.tmp" <<EOF
 # Orca server access, written $(date -u +%FT%TZ). Treat these like passwords.
-# Web client: open in a browser.  Pairing URL: Orca desktop -> Settings -> Remote Orca Servers -> Add Server,
+# Pairing URL: Orca desktop -> Settings -> Remote Orca Servers -> Add Server,
 # or Orca mobile -> Pair -> scan the QR from "orca-urls --qr" (or "Paste code instead").
-WEB_URL=${web}
+${web:+# Web client: open in a browser.
+WEB_URL=$web}
 PAIRING_URL=${pairing}
 EOF
         mv -f "$info_file.tmp" "$info_file")

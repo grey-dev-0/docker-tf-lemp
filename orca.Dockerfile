@@ -2,6 +2,7 @@
 # Standalone (does not need the stack's `kernel` image).
 FROM rockylinux:9
 ARG ORCA_VERSION=latest
+ARG ORCA_WEB_CLIENT=0
 ARG NODE_STREAM=22
 ARG UID=9000
 ARG GID=9000
@@ -25,12 +26,16 @@ RUN dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-
     dnf clean all
 
 # Orca IDE rpm (provides /usr/bin/orca-ide); dnf resolves the Electron runtime libraries it depends on.
+# Without ORCA_WEB_CLIENT=1 the browser web client (web IDE) goes: since 1.4.230 `orca serve` hands it to orcad whenever
+# out/web/web-index.html exists, and there's no flag to stop it. Paired clients are unaffected; the mobile app's
+# bundle is out/mobile-web.
 RUN set -eux; arch=$(uname -m); ver=$ORCA_VERSION; \
     if [ "$ver" = latest ]; then \
         ver=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/stablyai/orca/releases/latest | sed 's#.*/tag/v##'); \
     fi; \
     dnf install -y "https://github.com/stablyai/orca/releases/download/v${ver}/orca-ide-${ver}.${arch}.rpm"; \
-    dnf clean all; ln -s /usr/bin/orca-ide /usr/local/bin/orca
+    dnf clean all; ln -s /usr/bin/orca-ide /usr/local/bin/orca; \
+    [ "$ORCA_WEB_CLIENT" = 1 ] || rm -rf /opt/Orca/resources/app.asar.unpacked/out/web
 
 # Claude Code and OpenCode 2 (`@opencode/cli`; `opencode-ai` is the 1.x line), installed system-wide so a fresh or persisted home volume never shadows them.
 # Self-updaters are off since the runtime user can't write here; rebuild the image to update.
@@ -49,18 +54,21 @@ RUN groupadd --gid $GID $USERNAME; useradd --uid $UID --gid $GID --create-home -
 COPY resources/orca/entrypoint.sh /usr/local/bin/orca-entrypoint
 COPY resources/orca/orca-urls /usr/local/bin/orca-urls
 
-# The Electron serve runtime is the one that also serves the browser web client (orcad, the default, doesn't);
-# its Chromium sandbox can't create namespaces inside an unprivileged container, hence ELECTRON_DISABLE_SANDBOX.
+# orcad (Orca's default serve runtime) serves paired clients only here: no embedded browser, and no browser web
+# client since the image drops it (see ORCA_WEB_CLIENT above). ORCA_SERVE_RUNTIME=electron adds the embedded browser,
+# and the web client when built with ORCA_WEB_CLIENT=1; its Chromium sandbox can't create namespaces inside an
+# unprivileged container, hence ELECTRON_DISABLE_SANDBOX.
 ENV ORCA_USER=$USERNAME \
     ORCA_PORT=6768 \
     ORCA_INFO_DIR=/var/lib/orca-info \
     ORCA_WORKDIR=/home/projects \
-    ORCA_SERVE_RUNTIME=electron \
+    ORCA_SERVE_RUNTIME=orcad \
     ELECTRON_DISABLE_SANDBOX=1 \
     DISABLE_AUTOUPDATER=1 \
     OPENCODE_DISABLE_AUTOUPDATE=1 \
     LANG=en_US.UTF-8
 EXPOSE 6768
-HEALTHCHECK --interval=30s --timeout=5s --start-period=90s CMD curl -so /dev/null "http://127.0.0.1:${ORCA_PORT}/" || exit 1
+# A TCP check: without the web client, orcad answers plain HTTP requests with a 404 at best.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s CMD bash -c "</dev/tcp/127.0.0.1/${ORCA_PORT}" || exit 1
 # Starts as root only to fix volume ownership, then drops to $ORCA_USER before launching Orca.
 ENTRYPOINT ["/usr/local/bin/orca-entrypoint"]

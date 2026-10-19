@@ -47,24 +47,26 @@ docker exec lemp-orca orca-urls        # or: cat orca-info/urls.txt
 docker exec -it lemp-orca orca-urls --qr   # + pairing QR for the Orca mobile app (Pair -> scan)
 ```
 
+The server accepts paired clients only (Orca desktop, mobile and CLI). Since Orca 1.4.230, `orca serve` also serves a browser web client (web IDE) whenever its files are installed, and has no flag to turn it off. So the image deletes them (`/opt/Orca/resources/app.asar.unpacked/out/web`) unless it's built with `--build-arg ORCA_WEB_CLIENT=1`.
+
 The entrypoint starts as root only to fix the ownership of the home volume, then runs Orca as `nginx` (the `USERID`/`GROUPID` user, the owner of `PROJECTS_ROOT`). Projects are mounted at `/home/projects`, the same path the `nginx` and `php` services use. Terminals and agents started from Orca run as that user, so they can edit project files without permission problems. For a shell as that user, run `docker exec -itu nginx lemp-orca bash`.
 
 | Item | Location |
 | --- | --- |
-| Web client / pairing URLs (regenerated on each start, mode `0600`) | `/var/lib/orca-info/urls.txt` in the container, `orca-info/urls.txt` in this repo (git-ignored) |
+| Pairing URL (regenerated on each start, mode `0600`) | `/var/lib/orca-info/urls.txt` in the container, `orca-info/urls.txt` in this repo (git-ignored) |
 | Orca, Claude Code and OpenCode logins and state | `orca-home` volume → `/home/nginx` |
 | Public endpoint | `https://ai.example.net` (TLS proxy, e.g. Cloudflare → nginx vhost `ai.conf` → `100.100.10.8:6768`) |
 | Direct port, for SSH tunnels only | `127.0.0.1:6768` on the host |
 
 The `ai.conf` vhost ships with the `nginx` image (`resources/nginx/ai.conf`). Replace `ai.example.net` there and in `ORCA_PAIRING_ADDRESS` (`docker-compose.yml`) with your own domain. It listens on port 80 only and expects TLS to be terminated in front of it. The `nginx` vhosts directory is a named volume, so the file is only copied into a fresh volume. On an existing stack, copy it in with `docker compose cp resources/nginx/ai.conf nginx:/etc/nginx/vhosts/` and reload nginx.
 
-To see who has access, run `./orca-devices`. A used link stays valid across restarts. If the URLs are compromised, run `./orca-devices revoke`. It revokes every client and link, restarts `orca` and prints a fresh pairing/web URL pair. Every client must then re-pair, and agents running in Orca terminals stop.
+To see who has access, run `./orca-devices`. A used link stays valid across restarts. If the URLs are compromised, run `./orca-devices revoke`. It revokes every client and link, restarts `orca` and prints a fresh pairing URL. Every client must then re-pair, and agents running in Orca terminals stop.
 
-The pairing and web URLs grant access to the runtime, so treat them like passwords. Paired clients get their own revocable grants. Restarting the container generates a fresh link but does not unpair existing clients.
+The pairing URL grants access to the runtime, so treat it like a password. Paired clients get their own revocable grants. Restarting the container generates a fresh link but does not unpair existing clients.
 
-Environment variables: `ORCA_PAIRING_ADDRESS` (the address clients dial, e.g. `wss://ai.example.net`), `ORCA_PORT` (`6768`), `ORCA_WORKDIR` (`/home/projects`), `ORCA_SERVE_RUNTIME` (`electron`; only this runtime serves the browser web client) and `ORCA_MOBILE_PAIRING` (`0`; `ORCA_MOBILE_PAIRING=1 docker compose up -d orca` issues a mobile-scoped offer instead of the runtime one, without a web URL).
+Environment variables: `ORCA_PAIRING_ADDRESS` (the address clients dial, e.g. `wss://ai.example.net`), `ORCA_PORT` (`6768`), `ORCA_WORKDIR` (`/home/projects`), `ORCA_SERVE_RUNTIME` (`orcad`; `electron` adds Orca's embedded browser) and `ORCA_MOBILE_PAIRING` (`0`; `ORCA_MOBILE_PAIRING=1 docker compose up -d orca` issues a mobile-scoped offer instead of the runtime one, without a web URL).
 
-Each link mints one device grant, so pair each device (desktop, browser, phone) from a fresh link: restart the container to get a new one. The mobile app accepts the regular runtime pairing URL by QR or by "Paste code instead".
+Each link mints one device grant, so pair each device (desktop, phone) from a fresh link: restart the container to get a new one. The mobile app accepts the regular runtime pairing URL by QR or by "Paste code instead".
 
 Agent logins are done after deployment from Orca's terminals or from a shell in the container: `claude` → `/login`, `opencode auth login`, or `orca account add --agent claude`.
 
